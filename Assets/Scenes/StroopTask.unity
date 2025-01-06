@@ -232,13 +232,21 @@ MonoBehaviour:
   taskLogger: {fileID: 269938012}
   fixationCross: {fileID: 1246790972}
   wordTxt: {fileID: 1565741349}
-  infoTxt: {fileID: 1484794086}
-  timerTxt: {fileID: 1204237601}
   startKey: 32
   greenKey: 49
   blueKey: 50
   redKey: 51
   yellowKey: 52
+  triggerNeutralStim: 1
+  triggerCongruentStim: 3
+  triggerIncongruentStim: 5
+  triggerNeutralAnswer: 11
+  triggerCongruentAnswer: 33
+  triggerIncongruentAnswer: 55
+  triggerResting1: 7
+  triggerResting2: 9
+  triggerResting3: 77
+  triggerResting4: 99
 --- !u!4 &269938010
 Transform:
   m_ObjectHideFlags: 0
@@ -279,7 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e00ed90a60c19a047a1fbd3e8897497a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: test
+  fileName: Nicolas
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,7 +665,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1204237600
 RectTransform:
   m_ObjectHideFlags: 0
@@ -925,7 +933,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1484794085
 RectTransform:
   m_ObjectHideFlags: 0
