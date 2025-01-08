@@ -1107,6 +1107,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
+      propertyPath: defaultArduinoBoardType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114023058375386772, guid: bb5e6aea88a650f4a8317e74940b0ea4, type: 3}
       propertyPath: presentExtentionsMap.keys.Array.size
       value: 1
       objectReference: {fileID: 0}
