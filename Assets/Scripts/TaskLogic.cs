@@ -703,7 +703,7 @@ public class TaskLogic : MonoBehaviour
                     waitingForSpace = false;
                     break;
                 case TaskState.WAITINGFORRESTINGSTART:
-                    restingStateCounter++;
+                    
                     switch (restingStateCounter)
                     {
                         case 0:
@@ -719,6 +719,7 @@ public class TaskLogic : MonoBehaviour
                             UduinoManager.Instance.sendCommand("setPinsHigh", triggerResting4);
                             break;
                     }
+                    restingStateCounter++;
                     isRestingState = true;
                     restingTimer = restingTime;
                     restingCounter++;
@@ -727,7 +728,8 @@ public class TaskLogic : MonoBehaviour
                     break;
             }
         }
-        if (Input.GetKeyDown(greenKey))
+
+        if (Input.GetKeyDown(greenKey) && stimIsActive && !stimTriggered)
         {
             switch (currentTrial.type)
             {
@@ -752,7 +754,7 @@ public class TaskLogic : MonoBehaviour
                 isAnswerCorrect = false;
             }
         }
-        if (Input.GetKeyDown(redKey))
+        if (Input.GetKeyDown(redKey) && stimIsActive && !stimTriggered)
         {
             switch (currentTrial.type)
             {
@@ -777,7 +779,7 @@ public class TaskLogic : MonoBehaviour
                 isAnswerCorrect = false;
             }
         }
-        if (Input.GetKeyDown(blueKey) && stimIsActive)
+        if (Input.GetKeyDown(blueKey) && stimIsActive && !stimTriggered)
         {
             switch (currentTrial.type)
             {
@@ -802,7 +804,7 @@ public class TaskLogic : MonoBehaviour
                 isAnswerCorrect = false;
             }
         }
-        if (Input.GetKeyDown(yellowKey) && stimIsActive)
+        if (Input.GetKeyDown(yellowKey) && stimIsActive && !stimTriggered)
         {
             switch (currentTrial.type)
             {
