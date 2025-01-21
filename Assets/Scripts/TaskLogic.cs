@@ -11,6 +11,9 @@ public class TaskLogic : MonoBehaviour
     [SerializeField] private ParametersReader parametersReader;
     [SerializeField] private TaskLogger taskLogger;
     [SerializeField] private GameObject fixationCross;
+    [SerializeField] private TextMeshProUGUI infoTxt;
+    [SerializeField] private GameObject trainingButtonGO;
+    [SerializeField] private GameObject mainButtonGO;
     [SerializeField] private TextMeshProUGUI wordTxt;
     [SerializeField] private KeyCode startKey = KeyCode.Space;
     [SerializeField] private KeyCode greenKey = KeyCode.Alpha1;
@@ -79,12 +82,9 @@ public class TaskLogic : MonoBehaviour
     private float stimTimer = 0.0f;
     private bool stimTriggered = false;
     private TaskState taskState = TaskState.WAITFORTRAININGSTART;
-    private bool waitingForSpace = false;
     private int currentBlock = 1;
     private ColorAnswer colorAnswer;
     private int trialCounter = 0;
-    private int nbTrainingTrials = 0;
-    private int nbMainTrials = 0;
     private bool isRestingState = false;
     private float restingTimer = 0.0f;
     private int restingCounter = 0;
@@ -109,8 +109,7 @@ public class TaskLogic : MonoBehaviour
     private bool mRand;
     private int nbBlocks;
     private float restingTime;
-    private bool isTrainingDone = false;
-    private bool doTraining = true;
+    private bool isTraining = false;
 
     // Stats variables
     
@@ -126,6 +125,9 @@ public class TaskLogic : MonoBehaviour
     private List<int> correctNeutralCounterM = new List<int>();
     private List<int> correctCongruentCounterM = new List<int>();
     private List<int> correctIncongruentCounterM = new List<int>();
+    private List<float> correctNeutralRTM = new List<float>();
+    private List<float> correctCongruentRTM = new List<float>();
+    private List<float> correctIncongruentRTM = new List<float>();
     private List<float> neutralRTT = new List<float>();
     private List<float> congruentRTT = new List<float>();
     private List<float> incongruentRTT = new List<float>();
@@ -163,26 +165,20 @@ public class TaskLogic : MonoBehaviour
                     //logs by block
                     for (int i = 0; i < nbBlocks; i++)
                     {
-                        if(i == 0 && doTraining)
-                        {
-                            taskLogger.WriteToFile("Block " + (i + 1) + " - Training trials");
-                            taskLogger.WriteToFile("Neutral counter: " + neutralCounterT[i] + ", Neutral correct: " + correctNeutralCounterT[i] + ", Neutral RT: " + neutralRTT[i] / neutralRTCounterT[i]);
-                            taskLogger.WriteToFile("Congruent counter: " + congruentCounterT[i] + ", Congruent correct: " + correctCongruentCounterT[i] + ", Congruent RT: " + congruentRTT[i] / congruentRTCounterT[i]);
-                            taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterT[i] + ", Incongruent correct: " + correctIncongruentCounterT[i] + ", Incongruent RT: " + incongruentRTT[i] / incongruentRTCounterT[i]);
-                        }
                         taskLogger.WriteToFile("Block " + (i + 1) + " - Main trials");
-                        taskLogger.WriteToFile("Neutral counter: " + neutralCounterM[i] + ", Neutral correct: " + correctNeutralCounterM[i] + ", Neutral RT: " + neutralRTM[i] / neutralRTCounterM[i]);
-                        taskLogger.WriteToFile("Congruent counter: " + congruentCounterM[i] + ", Congruent correct: " + correctCongruentCounterM[i] + ", Congruent RT: " + congruentRTM[i] / congruentRTCounterM[i]);
-                        taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM[i] + ", Incongruent correct: " + correctIncongruentCounterM[i] + ", Incongruent RT: " + incongruentRTM[i] / incongruentRTCounterM[i]);
+                        taskLogger.WriteToFile("Neutral counter: " + neutralCounterM[i] + ", Neutral correct: " + correctNeutralCounterM[i] + ", Neutral RT: " + neutralRTM[i] / neutralRTCounterM[i] + ", Neutral correct RT: " + correctNeutralRTM[i] / correctNeutralCounterM[i]);
+                        taskLogger.WriteToFile("Congruent counter: " + congruentCounterM[i] + ", Congruent correct: " + correctCongruentCounterM[i] + ", Congruent RT: " + congruentRTM[i] / congruentRTCounterM[i] + ", Congruent correct RT: " + correctCongruentRTM[i] / correctCongruentCounterM[i]);
+                        taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM[i] + ", Incongruent correct: " + correctIncongruentCounterM[i] + ", Incongruent RT: " + incongruentRTM[i] / incongruentRTCounterM[i] + ", Incongruent correct RT: " + correctIncongruentRTM[i] / correctIncongruentCounterM[i]);
                     }
                     // total logs                 
                     taskLogger.WriteToFile("Total - Main trials");
-                    taskLogger.WriteToFile("Neutral counter: " + neutralCounterM.Sum() + ", Neutral correct: " + correctNeutralCounterM.Sum() + ", Neutral RT: " + neutralRTM.Sum() / neutralRTCounterM.Sum());
-                    taskLogger.WriteToFile("Congruent counter: " + congruentCounterM.Sum() + ", Congruent correct: " + correctCongruentCounterM.Sum() + ", Congruent RT: " + congruentRTM.Sum() / congruentRTCounterM.Sum());
-                    taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM.Sum() + ", Incongruent correct: " + correctIncongruentCounterM.Sum() + ", Incongruent RT: " + incongruentRTM.Sum() / incongruentRTCounterM.Sum());
+                    taskLogger.WriteToFile("Neutral counter: " + neutralCounterM.Sum() + ", Neutral correct: " + correctNeutralCounterM.Sum() + ", Neutral RT: " + neutralRTM.Sum() / neutralRTCounterM.Sum() + ", Neutral correct RT: " + correctNeutralRTM.Sum() / correctNeutralCounterM.Sum());
+                    taskLogger.WriteToFile("Congruent counter: " + congruentCounterM.Sum() + ", Congruent correct: " + correctCongruentCounterM.Sum() + ", Congruent RT: " + congruentRTM.Sum() / congruentRTCounterM.Sum() + ", Congruent correct RT: " + correctCongruentRTM.Sum() / correctCongruentCounterM.Sum());
+                    taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM.Sum() + ", Incongruent correct: " + correctIncongruentCounterM.Sum() + ", Incongruent RT: " + incongruentRTM.Sum() / incongruentRTCounterM.Sum() + ", Incongruent correct RT: " + correctIncongruentRTM.Sum() / correctIncongruentCounterM.Sum());
 
 
                     taskLogger.CloseFile();
+                    infoTxt.text = "Task completed.";
                     Debug.Log("Task completed.");
                 }
                 else
@@ -190,18 +186,13 @@ public class TaskLogic : MonoBehaviour
                     if(restingCounter % 2 == 0)
                     {
                         // We finished a block, now wait to start resting period for the next block
+                        infoTxt.text = "Press Space key to start resting period.";
                         taskState = TaskState.WAITINGFORRESTINGSTART;
                     }
                     else
                     {
-                        if(currentBlock == 1 && doTraining)
-                        {
-                            taskState = TaskState.WAITFORTRAININGSTART;
-                        }
-                        else
-                        {
-                            taskState = TaskState.WAITFORMAINSTART;
-                        }
+                        infoTxt.text = "Press Space key to start block " + currentBlock + ".";
+                        taskState = TaskState.WAITFORMAINSTART;
                     }
                 }
             }
@@ -393,8 +384,9 @@ public class TaskLogic : MonoBehaviour
                     if (isAnswerCorrect)
                     {
                         correctNeutralCounterM[currentBlock - 1]++;
+                        correctNeutralRTM[currentBlock - 1] += stimTimer;
                     }
-                    if (stimTimer < stimMaxDuration)
+                    if (stimTimer < stimMaxDuration || isAnswerCorrect)
                     {
                         neutralRTM[currentBlock - 1] += stimTimer;
                         neutralRTCounterM[currentBlock - 1]++;
@@ -405,8 +397,9 @@ public class TaskLogic : MonoBehaviour
                     if (isAnswerCorrect)
                     {
                         correctCongruentCounterM[currentBlock - 1]++;
+                        correctCongruentRTM[currentBlock - 1] += stimTimer;
                     }
-                    if (stimTimer < stimMaxDuration)
+                    if (stimTimer < stimMaxDuration || isAnswerCorrect)
                     {
                         congruentRTM[currentBlock - 1] += stimTimer;
                         congruentRTCounterM[currentBlock - 1]++;
@@ -417,8 +410,9 @@ public class TaskLogic : MonoBehaviour
                     if (isAnswerCorrect)
                     {
                         correctIncongruentCounterM[currentBlock - 1]++;
+                        correctIncongruentRTM[currentBlock - 1] += stimTimer;
                     }
-                    if (stimTimer < stimMaxDuration)
+                    if (stimTimer < stimMaxDuration || isAnswerCorrect)
                     {
                         incongruentRTM[currentBlock - 1] += stimTimer;
                         incongruentRTCounterM[currentBlock - 1]++;
@@ -426,55 +420,51 @@ public class TaskLogic : MonoBehaviour
                     break;
             }
         }
-
-        bool isTraining = nbMainTrials == mainTrials.Count;
-        taskLogger.WriteToFile(currentBlock + ", " + isTraining + ", " + trialCounter + ", " + currentTrial.type + ", " + currentTrial.word + ", " + currentTrial.color + ", " + colorAnswer + ", " + participantAnswer + ", " + isAnswerCorrect + ", " + stimTimer + ", " + generalTimer);
+        if (!isTraining)
+        {
+            taskLogger.WriteToFile(currentBlock + ", " + trialCounter + ", " + currentTrial.type + ", " + currentTrial.word + ", " + currentTrial.color + ", " + colorAnswer + ", " + participantAnswer + ", " + isAnswerCorrect + ", " + stimTimer + ", " + generalTimer);
+        }
         float itiDuration = Random.Range(itiMinDuration, itiMaxDuration);
         ShowBlankScreen();
         yield return new WaitForSeconds(itiDuration);
-        if (trainingTrials.Count > 0 && !isTrainingDone && doTraining)
+        if (trainingTrials.Count > 0 && isTraining)
         {
-            if(trainingTrials.Count == 1)
-            {
-                waitingForSpace = true;
-                isTrainingDone = true;
-            }
             showNextTrainingTrial = true;
         }
         else
         {
-            if (mainTrials.Count > 0)
+            if (isTraining)
             {
-                if(waitingForSpace)
-                {
-                    taskState = TaskState.WAITFORMAINSTART;
-                    yield return null;
-                }
-                else
-                {
-                    showNextMainTrial = true;
-                }
+                Setup();
             }
             else
             {
-                if(currentBlock < nbBlocks)
+                if (mainTrials.Count > 0)
                 {
-                    currentBlock++;
-                    showNextTrainingTrial = false;
-                    showNextMainTrial = false;
-                    stimIsActive = false;
-                    stimTimer = 0.0f;
-                    stimTriggered = false;
-                    taskState = TaskState.WAITINGFORRESTINGSTART;
-                    waitingForSpace = false;
-                    CreateTrialsList();
+                    showNextMainTrial = true;
                 }
                 else
                 {
-                    currentBlock++;
-                    taskState = TaskState.WAITINGFORRESTINGSTART;
+                    if (currentBlock < nbBlocks)
+                    {
+                        infoTxt.text = "Block " + currentBlock + " completed. Press Space key to start end of block resting period.";
+                        currentBlock++;
+                        showNextTrainingTrial = false;
+                        showNextMainTrial = false;
+                        stimIsActive = false;
+                        stimTimer = 0.0f;
+                        stimTriggered = false;
+                        taskState = TaskState.WAITINGFORRESTINGSTART;
+                        CreateTrialsList();
+                    }
+                    else
+                    {
+                        currentBlock++;
+                        infoTxt.text = "Press Space key to start end of block resting period.";
+                        taskState = TaskState.WAITINGFORRESTINGSTART;
+                    }
                 }
-            }
+            }   
         }
         yield return null;
     }
@@ -496,7 +486,6 @@ public class TaskLogic : MonoBehaviour
         mRand = bool.Parse(parameters[0][12]);
         nbBlocks = int.Parse(parameters[0][13]);
         restingTime = int.Parse(parameters[0][14]);
-        doTraining = bool.Parse(parameters[0][15]);
     }
 
     private void CreateTrialsList()
@@ -538,7 +527,6 @@ public class TaskLogic : MonoBehaviour
         {
             trainingTrials = RandomizeListWithoutMoreThanTwoRep(trainingTrials);
         }
-        nbTrainingTrials = trainingTrials.Count;
 
         // Main trials
         for (int i = 0; i < mNeutralRep; i++)
@@ -574,7 +562,6 @@ public class TaskLogic : MonoBehaviour
         {
             mainTrials = RandomizeListWithoutMoreThanTwoRep(mainTrials);
         }
-        nbMainTrials = mainTrials.Count;
 
         if (mainTrials.Count == 0)
         {
@@ -607,6 +594,9 @@ public class TaskLogic : MonoBehaviour
             neutralRTCounterM.Add(0);
             congruentRTCounterM.Add(0);
             incongruentRTCounterM.Add(0);
+            correctNeutralRTM.Add(0.0f);
+            correctCongruentRTM.Add(0.0f);
+            correctIncongruentRTM.Add(0.0f);
         }
     }
 
@@ -658,7 +648,8 @@ public class TaskLogic : MonoBehaviour
 
     private void Setup()
     {
-        taskLogger.StartTaskLogging();
+        trainingButtonGO.SetActive(true);
+        mainButtonGO.SetActive(true);
         parameters = parametersReader.ReadParameters();
         SetParameters();
         CreateTrialsList();
@@ -668,14 +659,13 @@ public class TaskLogic : MonoBehaviour
         stimTimer = 0.0f;
         stimTriggered = false;
         taskState = TaskState.WAITINGFORRESTINGSTART;
-        waitingForSpace = false;
         currentBlock = 1;
         restingCounter = 0;
         isRestingState = false;
         restingTimer = restingTime;
         isAnswerCorrect = false;
         generalTimer = 0.0f;
-        taskLogger.WriteToFile("Block, isTraining, TrialNb, TrialType, Word, Color, CorrectAnswer, ParticipantAnswer, IsCorrect, ReactionTime, timeStamp");
+        infoTxt.text = "Select \"Training\" to start a training session or \"Main\" to start the main task.";
     }
 
     private void ShowBlankScreen()
@@ -688,19 +678,18 @@ public class TaskLogic : MonoBehaviour
     {
         if (Input.GetKeyDown(startKey) && taskState != TaskState.NOTWAITING)
         {
+            infoTxt.text = "";
             switch (taskState)
             {
                 case TaskState.WAITFORTRAININGSTART:
                     trialCounter = 0;
                     showNextTrainingTrial = true;
                     taskState = TaskState.NOTWAITING;
-                    waitingForSpace = false;
                     break;
                 case TaskState.WAITFORMAINSTART:
                     trialCounter = 0;
                     showNextMainTrial = true;
                     taskState = TaskState.NOTWAITING;
-                    waitingForSpace = false;
                     break;
                 case TaskState.WAITINGFORRESTINGSTART:
                     
@@ -829,5 +818,25 @@ public class TaskLogic : MonoBehaviour
                 isAnswerCorrect = false;
             }
         }
+    }
+
+    public void PressTrainingButton()
+    {
+        trainingButtonGO.SetActive(false);
+        mainButtonGO.SetActive(false);
+        isTraining = true;
+        taskState = TaskState.WAITFORTRAININGSTART;
+        infoTxt.text = "Press Space key to start training session.";
+    }
+
+    public void PressMainButton()
+    {
+        taskLogger.StartTaskLogging();
+        taskLogger.WriteToFile("Block, TrialNb, TrialType, Word, Color, CorrectAnswer, ParticipantAnswer, IsCorrect, ReactionTime, timeStamp");
+        trainingButtonGO.SetActive(false);
+        mainButtonGO.SetActive(false);
+        isTraining = false;
+        taskState = TaskState.WAITINGFORRESTINGSTART;
+        infoTxt.text = "Press Space key to start resting period.";
     }
 }

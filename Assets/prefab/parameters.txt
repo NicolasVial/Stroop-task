@@ -1,2 +1,2 @@
-fix_cross, blank, stim_max, iti_min, iti_max, t_neutral_rep, t_cong_rep, t_incong_rep, t_rand, m_neutral_rep, m_cong_rep, m_incong_rep, m_rand, nb_blocks, resting_time, do_training
-0.1, 0.1, 0.1, 0.8, 1, 1, 1, 1, true, 1, 1, 1, true, 2, 5, false
+fix_cross, blank, stim_max, iti_min, iti_max, t_neutral_rep, t_cong_rep, t_incong_rep, t_rand, m_neutral_rep, m_cong_rep, m_incong_rep, m_rand, nb_blocks, resting_time
+0.5, 0.3, 1.2, 0.8, 1, 1, 1, 1, true, 6, 6, 2, true, 2, 120
