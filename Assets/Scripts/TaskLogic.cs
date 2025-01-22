@@ -93,6 +93,9 @@ public class TaskLogic : MonoBehaviour
     private float generalTimer = 0.0f;
     private string participantAnswer;
     private int restingStateCounter = 0;
+    private int nbPhases = 2;
+    private int phaseNb = 1;
+    private int isPhase2 = 0;
 
     private float fixCrossDuration;
     private float blankDuration;
@@ -160,8 +163,32 @@ public class TaskLogic : MonoBehaviour
             {
                 isRestingState = false;
                 fixationCross.SetActive(false);
-                if (currentBlock > nbBlocks)
+                if (currentBlock > nbBlocks && nbPhases == phaseNb)
                 {
+                    for(int i = 0; i<nbPhases; i++)
+                    {
+                        for(int j = 0; j<nbBlocks; j++)
+                        {
+                            taskLogger.WriteToFile("Phase " + (i + 1) + " - Block " + (j + 1) + " - Main trials");
+                            taskLogger.WriteToFile("Neutral counter: " + neutralCounterM[j + (nbBlocks * i)] + ", Neutral correct: " + correctNeutralCounterM[j + (nbBlocks * i)] + ", Neutral RT: " + neutralRTM[j + (nbBlocks * i)] / neutralRTCounterM[j + (nbBlocks * i)] + ", Neutral correct RT: " + correctNeutralRTM[j + (nbBlocks * i)] / correctNeutralCounterM[j + (nbBlocks * i)]);
+                            taskLogger.WriteToFile("Congruent counter: " + congruentCounterM[j + (nbBlocks * i)] + ", Congruent correct: " + correctCongruentCounterM[j + (nbBlocks * i)] + ", Congruent RT: " + congruentRTM[j + (nbBlocks * i)] / congruentRTCounterM[j + (nbBlocks * i)] + ", Congruent correct RT: " + correctCongruentRTM[j + (nbBlocks * i)] / correctCongruentCounterM[j + (nbBlocks * i)]);
+                            taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM[j + (nbBlocks * i)] + ", Incongruent correct: " + correctIncongruentCounterM[j + (nbBlocks * i)] + ", Incongruent RT: " + incongruentRTM[j + (nbBlocks * i)] / incongruentRTCounterM[j + (nbBlocks * i)] + ", Incongruent correct RT: " + correctIncongruentRTM[j + (nbBlocks * i)] / correctIncongruentCounterM[j + (nbBlocks * i)]);
+                        }
+                        // total phase logs
+                        taskLogger.WriteToFile("Total Phase " + (i + 1) + " - Main trials");
+                        taskLogger.WriteToFile("Neutral counter: " + neutralCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Neutral correct: " + correctNeutralCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Neutral RT: " + neutralRTM.Skip(i * nbBlocks).Take(nbBlocks).Sum() / neutralRTCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Neutral correct RT: " + correctNeutralRTM.Skip(i * nbBlocks).Take(nbBlocks).Sum() / correctNeutralCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum());
+                        taskLogger.WriteToFile("Congruent counter: " + congruentCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Congruent correct: " + correctCongruentCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Congruent RT: " + congruentRTM.Skip(i * nbBlocks).Take(nbBlocks).Sum() / congruentRTCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Congruent correct RT: " + correctCongruentRTM.Skip(i * nbBlocks).Take(nbBlocks).Sum() / correctCongruentCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum());
+                        taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Incongruent correct: " + correctIncongruentCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Incongruent RT: " + incongruentRTM.Skip(i * nbBlocks).Take(nbBlocks).Sum() / incongruentRTCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum() + ", Incongruent correct RT: " + correctIncongruentRTM.Skip(i * nbBlocks).Take(nbBlocks).Sum() / correctIncongruentCounterM.Skip(i * nbBlocks).Take(nbBlocks).Sum());
+                    }
+                    // total logs
+                    taskLogger.WriteToFile("Total - Main trials");
+                    taskLogger.WriteToFile("Neutral counter: " + neutralCounterM.Sum() + ", Neutral correct: " + correctNeutralCounterM.Sum() + ", Neutral RT: " + neutralRTM.Sum() / neutralRTCounterM.Sum() + ", Neutral correct RT: " + correctNeutralRTM.Sum() / correctNeutralCounterM.Sum());
+                    taskLogger.WriteToFile("Congruent counter: " + congruentCounterM.Sum() + ", Congruent correct: " + correctCongruentCounterM.Sum() + ", Congruent RT: " + congruentRTM.Sum() / congruentRTCounterM.Sum() + ", Congruent correct RT: " + correctCongruentRTM.Sum() / correctCongruentCounterM.Sum());
+                    taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM.Sum() + ", Incongruent correct: " + correctIncongruentCounterM.Sum() + ", Incongruent RT: " + incongruentRTM.Sum() / incongruentRTCounterM.Sum() + ", Incongruent correct RT: " + correctIncongruentRTM.Sum() / correctIncongruentCounterM.Sum());
+
+
+
+                    /*
                     //logs by block
                     for (int i = 0; i < nbBlocks; i++)
                     {
@@ -175,7 +202,7 @@ public class TaskLogic : MonoBehaviour
                     taskLogger.WriteToFile("Neutral counter: " + neutralCounterM.Sum() + ", Neutral correct: " + correctNeutralCounterM.Sum() + ", Neutral RT: " + neutralRTM.Sum() / neutralRTCounterM.Sum() + ", Neutral correct RT: " + correctNeutralRTM.Sum() / correctNeutralCounterM.Sum());
                     taskLogger.WriteToFile("Congruent counter: " + congruentCounterM.Sum() + ", Congruent correct: " + correctCongruentCounterM.Sum() + ", Congruent RT: " + congruentRTM.Sum() / congruentRTCounterM.Sum() + ", Congruent correct RT: " + correctCongruentRTM.Sum() / correctCongruentCounterM.Sum());
                     taskLogger.WriteToFile("Incongruent counter: " + incongruentCounterM.Sum() + ", Incongruent correct: " + correctIncongruentCounterM.Sum() + ", Incongruent RT: " + incongruentRTM.Sum() / incongruentRTCounterM.Sum() + ", Incongruent correct RT: " + correctIncongruentRTM.Sum() / correctIncongruentCounterM.Sum());
-
+                    */
 
                     taskLogger.CloseFile();
                     infoTxt.text = "Task completed.";
@@ -183,9 +210,16 @@ public class TaskLogic : MonoBehaviour
                 }
                 else
                 {
-                    if(restingCounter % 2 == 0)
+                    if (currentBlock > nbBlocks)
                     {
-                        // We finished a block, now wait to start resting period for the next block
+                        phaseNb++;
+                        currentBlock = 1;
+                        isPhase2 = 1;
+                        CreateTrialsList();
+                    }
+                    if (restingCounter % 2 == 0)
+                    {
+                        // We finished a serie of blocks, now wait to start resting period for the next serie of blocks
                         infoTxt.text = "Press Space key to start resting period.";
                         taskState = TaskState.WAITINGFORRESTINGSTART;
                     }
@@ -337,39 +371,39 @@ public class TaskLogic : MonoBehaviour
             switch (currentTrial.type)
             {
                 case TrialType.NEUTRAL:
-                    neutralCounterT[currentBlock - 1]++;
+                    neutralCounterT[currentBlock - 1 + (nbBlocks*isPhase2)]++;
                     if (isAnswerCorrect)
                     {
-                        correctNeutralCounterT[currentBlock - 1]++;
+                        correctNeutralCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     if(stimTimer < stimMaxDuration)
                     {
-                        neutralRTT[currentBlock - 1] += stimTimer;
-                        neutralRTCounterT[currentBlock - 1]++;
+                        neutralRTT[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
+                        neutralRTCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     break;
                 case TrialType.CONGRUENT:
-                    congruentCounterT[currentBlock - 1]++;
+                    congruentCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     if (isAnswerCorrect)
                     {
-                        correctCongruentCounterT[currentBlock - 1]++;
+                        correctCongruentCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     if (stimTimer < stimMaxDuration)
                     {
-                        congruentRTT[currentBlock - 1] += stimTimer;
-                        congruentRTCounterT[currentBlock - 1]++;
+                        congruentRTT[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
+                        congruentRTCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     break;
                 case TrialType.INCONGRUENT:
-                    incongruentCounterT[currentBlock - 1]++;
+                    incongruentCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     if (isAnswerCorrect)
                     {
-                        correctIncongruentCounterT[currentBlock - 1]++;
+                        correctIncongruentCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     if (stimTimer < stimMaxDuration)
                     {
-                        incongruentRTT[currentBlock - 1] += stimTimer;
-                        incongruentRTCounterT[currentBlock - 1]++;
+                        incongruentRTT[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
+                        incongruentRTCounterT[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     break;
             }
@@ -380,42 +414,42 @@ public class TaskLogic : MonoBehaviour
             switch (currentTrial.type)
             {
                 case TrialType.NEUTRAL:
-                    neutralCounterM[currentBlock - 1]++;
+                    neutralCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     if (isAnswerCorrect)
                     {
-                        correctNeutralCounterM[currentBlock - 1]++;
-                        correctNeutralRTM[currentBlock - 1] += stimTimer;
+                        correctNeutralCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
+                        correctNeutralRTM[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
                     }
                     if (stimTimer < stimMaxDuration || isAnswerCorrect)
                     {
-                        neutralRTM[currentBlock - 1] += stimTimer;
-                        neutralRTCounterM[currentBlock - 1]++;
+                        neutralRTM[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
+                        neutralRTCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     break;
                 case TrialType.CONGRUENT:
-                    congruentCounterM[currentBlock - 1]++;
+                    congruentCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     if (isAnswerCorrect)
                     {
-                        correctCongruentCounterM[currentBlock - 1]++;
-                        correctCongruentRTM[currentBlock - 1] += stimTimer;
+                        correctCongruentCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
+                        correctCongruentRTM[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
                     }
                     if (stimTimer < stimMaxDuration || isAnswerCorrect)
                     {
-                        congruentRTM[currentBlock - 1] += stimTimer;
-                        congruentRTCounterM[currentBlock - 1]++;
+                        congruentRTM[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
+                        congruentRTCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     break;
                 case TrialType.INCONGRUENT:
-                    incongruentCounterM[currentBlock - 1]++;
+                    incongruentCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     if (isAnswerCorrect)
                     {
-                        correctIncongruentCounterM[currentBlock - 1]++;
-                        correctIncongruentRTM[currentBlock - 1] += stimTimer;
+                        correctIncongruentCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
+                        correctIncongruentRTM[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
                     }
                     if (stimTimer < stimMaxDuration || isAnswerCorrect)
                     {
-                        incongruentRTM[currentBlock - 1] += stimTimer;
-                        incongruentRTCounterM[currentBlock - 1]++;
+                        incongruentRTM[currentBlock - 1 + (nbBlocks * isPhase2)] += stimTimer;
+                        incongruentRTCounterM[currentBlock - 1 + (nbBlocks * isPhase2)]++;
                     }
                     break;
             }
@@ -447,20 +481,20 @@ public class TaskLogic : MonoBehaviour
                 {
                     if (currentBlock < nbBlocks)
                     {
-                        infoTxt.text = "Block " + currentBlock + " completed. Press Space key to start end of block resting period.";
+                        infoTxt.text = "Block " + currentBlock + " completed. Press Space key to start the next block.";
                         currentBlock++;
                         showNextTrainingTrial = false;
                         showNextMainTrial = false;
                         stimIsActive = false;
                         stimTimer = 0.0f;
                         stimTriggered = false;
-                        taskState = TaskState.WAITINGFORRESTINGSTART;
+                        taskState = TaskState.WAITFORMAINSTART;
                         CreateTrialsList();
                     }
                     else
                     {
                         currentBlock++;
-                        infoTxt.text = "Press Space key to start end of block resting period.";
+                        infoTxt.text = "Press Space key to start resting period.";
                         taskState = TaskState.WAITINGFORRESTINGSTART;
                     }
                 }
@@ -568,7 +602,7 @@ public class TaskLogic : MonoBehaviour
             Debug.LogError("Error: No trials created.");
         }
 
-        for(int i=0; i<nbBlocks;i++)
+        for (int i=0; i<(nbBlocks * nbPhases);i++)
         {
             neutralCounterT.Add(0);
             congruentCounterT.Add(0);
@@ -648,6 +682,7 @@ public class TaskLogic : MonoBehaviour
 
     private void Setup()
     {
+        phaseNb = 1;
         trainingButtonGO.SetActive(true);
         mainButtonGO.SetActive(true);
         parameters = parametersReader.ReadParameters();
